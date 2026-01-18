@@ -1,0 +1,8 @@
+sources:
+  - name: finance
+    description: All stock related data sources
+    database: raw
+    schema: finance
+    tables:
+      - name: raw_stock_prices
+        description: containing raw stock prices data from s3 bucket
