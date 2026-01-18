@@ -1,0 +1,1 @@
+select * from {{ ref('fortune_50_companies_jan_2026') }}

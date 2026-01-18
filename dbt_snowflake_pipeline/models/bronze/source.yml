@@ -1,0 +1,8 @@
+sources:
+  - name: finance
+    description: This is a replica of the Postgres database used by our app
+    database: raw
+    schema: finance
+    tables:
+      - name: raw_stock_prices
+        description: raw stock prices data loaded directly from s3 bucket
