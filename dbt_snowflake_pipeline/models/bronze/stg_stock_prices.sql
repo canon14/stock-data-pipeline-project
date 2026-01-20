@@ -1,4 +1,4 @@
-{{ 
+{{
     config(
         materialized='incremental',
         incremental_strategy='microbatch',
@@ -6,47 +6,51 @@
         begin='2026-01-01',
         batch_size='month',
         lookback=1
-    ) 
+    )
 }}
 
-/* 
-    Tables 
+/*
+    Tables -
 */
 
-with source as (
-    select *
-    from {{ source('finance', 'raw_stock_prices') }}
-    QUALIFY ROW_NUMBER() OVER(PARTITION BY SYMBOL, DATE ORDER BY INGESTED_AT DESC) = 1
+WITH source AS (
+    SELECT *
+    FROM {{ source('finance', 'raw_stock_prices') }}
+    QUALIFY
+        ROW_NUMBER() OVER (
+            PARTITION BY symbol, date
+            ORDER BY ingested_at DESC
+        ) = 1
 ),
 
-/* 
-    Formatted 
+/*
+    Formatted
 */
 
-formatted as (
-    
-    select 
+formatted AS (
+
+    SELECT
         -- PK
-        {{ dbt_utils.generate_surrogate_key(['symbol', 'date']) }} AS _surrogate_key,
-        
+
+        {{ dbt_utils.generate_surrogate_key(['symbol', 'date']) }}
+            AS _surrogate_key,
+
         -- Details
         CAST(symbol AS VARCHAR) AS stock_ticker,
-        
+
         -- Measures
         CAST(open_price AS FLOAT) AS open_price,
         CAST(high_price AS FLOAT) AS high_price,
         CAST(low_price AS FLOAT) AS low_price,
         CAST(close_price AS FLOAT) AS close_price,
-        CAST(volume AS INT) AS volume,
+        CAST(volume AS INT) AS volume, -- noqa: RF04
 
         -- Metadata
         CAST(date AS DATE) AS trade_date,
         CAST(ingested_at AS TIMESTAMP) AS ingested_at
-    from
+    FROM
         source
 
 )
 
-select * from formatted
-
-
+SELECT * FROM formatted

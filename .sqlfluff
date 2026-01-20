@@ -1,10 +1,22 @@
 [sqlfluff]
 dialect = snowflake
-templater = dbt  # If using dbt
-runaway_limit = 10
+templater = jinja
+sql_file_exts = .sql
+exclude_rules = RF02, RF03, ST06
+max_line_length = 120
+ignore = templating
+large_file_skip_byte_limit = 21000
+ignore_paths = analyses/,dbt_modules/,dbt_packages/,macros/,target/,tests/
 
 [sqlfluff:indentation]
 tab_width = 4
+indent_unit = space
 
 [sqlfluff:rules:capitalisation.keywords]
-capitalisation_policy = upper  # Forces keywords like SELECT to be uppercase
+capitalisation_policy = upper
+
+[sqlfluff:rules:capitalisation.functions]
+extended_capitalisation_policy = upper
+
+[sqlfluff:rules:references.keywords]
+ignore_words = date, count, user
