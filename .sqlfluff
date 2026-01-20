@@ -1,0 +1,10 @@
+[sqlfluff]
+dialect = snowflake
+templater = dbt  # If using dbt
+runaway_limit = 10
+
+[sqlfluff:indentation]
+tab_width = 4
+
+[sqlfluff:rules:capitalisation.keywords]
+capitalisation_policy = upper  # Forces keywords like SELECT to be uppercase

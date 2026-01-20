@@ -1,0 +1,55 @@
+version: 2
+
+models:
+  - name: stg_stock_prices
+    description: >
+      This model contains trading performance for each stock ticker
+    columns:
+      - name: _surrogate_key
+        description: surrogate key for the stock prices table.
+        tests:
+          - unique
+          - not_null
+
+      - name: stock_ticker
+        description: stock ticker
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["AAPL", "MSFT", "GOOGL"]
+
+      - name: trade_date
+        description: trading date
+
+      # Metrics tests
+      - name: open_price
+        description: The price at which the stock started trading
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: "> 0"
+
+      - name: high_price
+        description: The highest price during the trading day
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: "> 0"
+
+      - name: low_price
+        description: The lowest price during the trading day
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: "> 0"
+
+      - name: close_price
+        description: The closing price
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: "> 0"
+
+      - name: volume
+        description: Volume of stocks being traded
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
+              config:
+                severity: warn

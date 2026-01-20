@@ -32,10 +32,18 @@ models:
     # Config indicated by + and applies to all files under models/example/
     bronze:
       +materialized: view
+      +database: BRONZE_PRODUCTION
+      +schema: FINANCE
+
     silver:
-      +materialized: view
+      +materialized: table
+      +database: SILVER_PRODUCTION
+      +schema: FINANCE
+
     gold:
-      +materialized: view
+      +materialized: table
+      +database: GOLD_PRODUCTION
+      +schema: FINANCE
 
 seeds:
   dbt_snowflake_pipeline: # Ensure this matches the 'name:' at the top of this file

@@ -1,0 +1,12 @@
+version: 2
+
+models:
+  - name: stg_f50_company_details
+    description: >
+      This model contains f50 companies details
+    columns:
+      - name: stock_ticker
+        description: primary key of the table
+        tests:
+          - unique
+          - not_null

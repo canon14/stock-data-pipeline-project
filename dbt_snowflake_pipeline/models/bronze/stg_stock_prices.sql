@@ -1,7 +1,12 @@
-{{
-  config(
-    materialized = 'table',
-    )
+{{ 
+    config(
+        materialized='incremental',
+        incremental_strategy='microbatch',
+        event_time='trade_date',
+        begin='2026-01-01',
+        batch_size='month',
+        lookback=1
+    ) 
 }}
 
 /* 
@@ -25,7 +30,7 @@ formatted as (
         {{ dbt_utils.generate_surrogate_key(['symbol', 'date']) }} AS _surrogate_key,
         
         -- Details
-        CAST(symbol AS VARCHAR) AS symbol,
+        CAST(symbol AS VARCHAR) AS stock_ticker,
         
         -- Measures
         CAST(open_price AS FLOAT) AS open_price,
