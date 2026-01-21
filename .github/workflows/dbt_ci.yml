@@ -32,7 +32,7 @@ jobs:
         run: |
           # Replace hyphens with underscores and save to GITHUB_ENV
           CLEAN_SCHEMA=$(echo "CI_${{ github.head_ref }}" | sed 's/-/_/g')
-          echo "DBT_SCHEMA=$CLEAN_SCHEMA" >> $GITHUB_ENV
+          echo "SNOWFLAKE_SCHEMA=$CLEAN_SCHEMA" >> $GITHUB_ENV
 
       - name: Set up Python
         uses: actions/setup-python@v5
