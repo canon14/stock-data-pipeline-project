@@ -16,7 +16,7 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ["AAPL", "MSFT", "GOOGL"]
+              values: [AAPL, MSFT, GOOGL]
 
       - name: trade_date
         description: trading date
