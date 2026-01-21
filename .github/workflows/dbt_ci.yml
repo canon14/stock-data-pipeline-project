@@ -58,4 +58,4 @@ jobs:
         run: |
           # 2026-01-20 -> Added --target to be explicit and ensure we build against the dev profile
           # 2026-01-21 -> Added --profiles-dir . to tell dbt the profile is in the current folder
-          dbt build --select state:modified+ --state prod_artifacts --target dev --profiles-dir .
+          dbt build --full-refresh --select state:modified+ --state prod_artifacts --target dev --profiles-dir .
