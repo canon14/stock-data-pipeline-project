@@ -13,6 +13,9 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./dbt_snowflake_pipeline
 
     env:
       DBT_ENV: PROD
