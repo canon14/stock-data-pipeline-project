@@ -1,0 +1,51 @@
+name: dbt_cleanup
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  cleanup_snowflake:
+    runs-on: ubuntu-latest
+
+    # These secrets should match your dbt_ci.yml secrets
+    env:
+      SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+      SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+      SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+      SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
+      SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
+      # This matches the schema naming logic in your CI workflow
+      TARGET_SCHEMA: "CI_${{ github.head_ref }}"
+
+    steps:
+      - name: Drop CI Schema from Snowflake
+        run: |
+          pip install snowflake-connector-python
+          python -c "
+          import snowflake.connector
+          import os
+
+          # Establish connection to Snowflake
+          ctx = snowflake.connector.connect(
+              account=os.getenv('SNOWFLAKE_ACCOUNT'),
+              user=os.getenv('SNOWFLAKE_USER'),
+              password=os.getenv('SNOWFLAKE_PASSWORD'),
+              role=os.getenv('SNOWFLAKE_ROLE'),
+              warehouse=os.getenv('SNOWFLAKE_WAREHOUSE')
+          )
+
+          # Force the schema name to uppercase for Snowflake compatibility
+          schema = os.getenv('TARGET_SCHEMA').upper()
+
+          # Execute the drop command
+          # Note: We hardcode DEVELOPMENT_GLOBAL as the safety container
+          try:
+              query = f'DROP SCHEMA IF EXISTS DEVELOPMENT_GLOBAL.\"{schema}\"'
+              ctx.cursor().execute(query)
+              print(f'✅ Successfully dropped schema: DEVELOPMENT_GLOBAL.{schema}')
+          except Exception as e:
+              print(f'❌ Error dropping schema: {e}')
+          finally:
+              ctx.close()
+          "

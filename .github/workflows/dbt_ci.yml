@@ -1,0 +1,52 @@
+name: dbt_slim_ci
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened]
+
+jobs:
+  dbt_run_ci:
+    runs-on: ubuntu-latest
+
+    env:
+      DBT_ENV: CI
+      SNOWFLAKE_DEV_DATABASE: "DEVELOPMENT_GLOBAL"
+      SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+      SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+      SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+      SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
+      SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
+      # FIXED: Use the variable defined above instead of a secret
+      SNOWFLAKE_DATABASE: "DEVELOPMENT_GLOBAL"
+      SNOWFLAKE_SCHEMA: "CI_${{ github.head_ref }}"
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install Dependencies
+        run: |
+          pip install dbt-snowflake
+          dbt deps
+
+      - name: Download Production Manifest from S3
+        run: |
+          mkdir -p prod_artifacts
+          # Ensure this secret name matches exactly what you have in GitHub settings
+          aws s3 cp s3://${{ secrets.DBT_PROD_MANIFEST_AWS_S3_BUCKET_NAME }}/dbt_artifacts/manifest.json prod_artifacts/manifest.json
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+
+      - name: dbt Build (Slim CI)
+        run: |
+          # Added --target to be explicit and ensure we build against the dev profile
+          dbt build --select state:modified+ --state prod_artifacts --target dev
