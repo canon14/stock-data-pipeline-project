@@ -13,21 +13,16 @@ jobs:
       run:
         working-directory: ./dbt_snowflake_pipeline
 
-    env:
-      DBT_ENV: CI
-      SNOWFLAKE_DEV_DATABASE: "DEVELOPMENT_GLOBAL"
-      SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
-      SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
-      SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
-      SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
-      SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
-      # FIXED: Use the variable defined above instead of a secret
-      SNOWFLAKE_DATABASE: "DEVELOPMENT_GLOBAL"
-      SNOWFLAKE_SCHEMA: "CI_${{ github.head_ref }}"
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+
+      # --- NEW SANITIZATION STEP --- 2026-01-21
+      - name: Sanitize Branch Name for Snowflake
+        run: |
+          # Replace hyphens with underscores and save to GITHUB_ENV
+          CLEAN_SCHEMA=$(echo "CI_${{ github.head_ref }}" | sed 's/-/_/g')
+          echo "DBT_SCHEMA=$CLEAN_SCHEMA" >> $GITHUB_ENV
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -54,3 +49,13 @@ jobs:
           # 2026-01-20 -> Added --target to be explicit and ensure we build against the dev profile
           # 2026-01-21 -> Added --profiles-dir . to tell dbt the profile is in the current folder
           dbt build --select state:modified+ --state prod_artifacts --target dev --profiles-dir .
+        env:
+          DBT_ENV: CI
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+          SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
+          SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
+          SNOWFLAKE_DATABASE: "DEVELOPMENT_GLOBAL"
+          # Use the sanitized variable we created in the previous step
+          SNOWFLAKE_SCHEMA: ${{ env.DBT_SCHEMA }}

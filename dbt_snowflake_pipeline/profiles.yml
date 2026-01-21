@@ -8,8 +8,8 @@ dbt_snowflake_pipeline:
       password: "{{ env_var('SNOWFLAKE_PASSWORD') }}"
       role: "{{ env_var('SNOWFLAKE_ROLE') }}"
       warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE') }}"
-      database: '"{{ env_var("SNOWFLAKE_DATABASE") }}"'
-      schema: '"{{ env_var("SNOWFLAKE_SCHEMA") }}"'
+      database: "{{ env_var('SNOWFLAKE_DATABASE') }}"
+      schema: "{{ env_var('SNOWFLAKE_SCHEMA') }}"
 
     # Add the production target here
     prod:
@@ -19,5 +19,5 @@ dbt_snowflake_pipeline:
       password: "{{ env_var('SNOWFLAKE_PASSWORD') }}"
       role: "{{ env_var('SNOWFLAKE_ROLE') }}"
       warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE') }}"
-      database: '"{{ env_var("SNOWFLAKE_DATABASE") }}"'
-      schema: '"{{ env_var("SNOWFLAKE_SCHEMA") }}"'
+      database: "{{ env_var('SNOWFLAKE_DATABASE') }}"
+      schema: "{{ env_var('SNOWFLAKE_SCHEMA') }}"
