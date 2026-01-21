@@ -1,51 +1,33 @@
-# Name your project! Project names should contain only lowercase characters
-# and underscores. A good package name should reflect your organization's
-# name or the intended use of these models
 name: "dbt_snowflake_pipeline"
 version: "1.0.0"
-
-# This setting configures which "profile" dbt uses for this project.
 profile: "dbt_snowflake_pipeline"
 
-# These configurations specify where dbt should look for different types of files.
-# The `model-paths` config, for example, states that models in this project can be
-# found in the "models/" directory. You probably won't need to change these!
 model-paths: ["models"]
-analysis-paths: ["analyses"]
+macro-paths: ["macros"]
 test-paths: ["tests"]
 seed-paths: ["seeds"]
-macro-paths: ["macros"]
-snapshot-paths: ["snapshots"]
 
-clean-targets: # directories to be removed by `dbt clean`
-  - "target"
-  - "dbt_packages"
-
-# Configuring models
-# Full documentation: https://docs.getdbt.com/docs/configuring-models
-
-# In this example config, we tell dbt to build all models in the example/
-# directory as views. These settings can be overridden in the individual model
-# files using the `{{ config(...) }}` macro.
 models:
   dbt_snowflake_pipeline:
-    # Config indicated by + and applies to all files under models/example/
+    # --- 1. Bronze Layer (Raw Ingestion) ---
     bronze:
-      +materialized: view
       +database: BRONZE_PRODUCTION
-      +schema: FINANCE
+      +schema: landing # Becomes 'LANDING' in Prod
+      +materialized: table # Physical storage for raw data
 
+    # --- 2. Silver Layer (Cleaned & Transformed) ---
     silver:
-      +materialized: table
       +database: SILVER_PRODUCTION
-      +schema: FINANCE
+      +schema: intermediate # Becomes 'INTERMEDIATE' in Prod
+      +materialized: view # Virtual layer to save on storage
 
+    # --- 3. Gold Layer (Business Intelligence) ---
     gold:
-      +materialized: table
       +database: GOLD_PRODUCTION
-      +schema: FINANCE
+      +schema: analytics # Becomes 'ANALYTICS' in Prod
+      +materialized: table # Optimized for dashboard performance
 
 seeds:
-  dbt_snowflake_pipeline: # Ensure this matches the 'name:' at the top of this file
-    +database: BRONZE_PRODUCTION # Recommended: Use ALL CAPS for Snowflake
-    +schema: raw_seeds # This will create a schema named '<your_profile_schema>_raw_seeds'
+  dbt_snowflake_pipeline:
+    +database: BRONZE_PRODUCTION
+    +schema: raw_seeds
