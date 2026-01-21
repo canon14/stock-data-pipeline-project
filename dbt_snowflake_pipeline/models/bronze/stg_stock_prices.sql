@@ -40,7 +40,7 @@ formatted AS (
 
         -- Measures
         CAST(open_price AS FLOAT) AS open_price,
-        CAST(open_price AS FLOAT) * 100 AS open_price_times_100,
+        CAST(open_price AS FLOAT) * 200 AS open_price_times_200,
         CAST(high_price AS FLOAT) AS high_price,
         CAST(low_price AS FLOAT) AS low_price,
         CAST(close_price AS FLOAT) AS close_price,
