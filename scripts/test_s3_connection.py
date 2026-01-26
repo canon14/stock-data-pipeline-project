@@ -6,10 +6,10 @@ from dotenv import load_dotenv
 load_dotenv("../.env")
 
 s3 = boto3.client(
-    's3',
+    "s3",
     aws_access_key_id=os.getenv("STOCK_DATA_AWS_S3_ACCESS_KEY_ID"),
     aws_secret_access_key=os.getenv("STOCK_DATA_AWS_S3_SECRET_ACCESS_KEY"),
-    region_name=os.getenv("AWS_REGION")
+    region_name=os.getenv("AWS_REGION"),
 )
 
 try:

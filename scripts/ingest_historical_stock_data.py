@@ -125,11 +125,8 @@ class StockExtractor:
         # Convert list of Pydantic models to a list of dicts for Pandas
         df = pd.DataFrame([r.model_dump() for r in records])
         df["ingested_at"] = datetime.now()
-        df["ingested_at"] = df[
-            "ingested_at"
-        ].astype(
-            str
-        )  # convert created_at to varchar and do the timestamp transformation in snowflake
+        # convert created_at to varchar and do the timestamp transformation in snowflake
+        df["ingested_at"] = df["ingested_at"].astype(str)
 
         # df.to_csv('final_data_test.csv')
 
@@ -196,7 +193,7 @@ if __name__ == "__main__":
     # We wrap the logic in a try-except block to handle errors gracefully.
 
     # Expand additional tickers below
-    tickers = ["AAPL", "MSFT", "GOOGL"]
+    tickers = ["TSLA"]
 
     # iterate over each ticker in the array
     for ticker in tickers:

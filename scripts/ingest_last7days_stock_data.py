@@ -135,11 +135,8 @@ class StockExtractor:
         # Convert list of Pydantic models to a list of dicts for Pandas
         df = pd.DataFrame([r.model_dump() for r in records])
         df["ingested_at"] = datetime.now()
-        df["ingested_at"] = df[
-            "ingested_at"
-        ].astype(
-            str
-        )  # convert created_at to varchar and do the timestamp transformation in snowflake
+        # convert created_at to varchar and do the timestamp transformation in snowflake
+        df["ingested_at"] = df["ingested_at"].astype(str)
 
         # df.to_csv('final_data_test.csv')
 
@@ -241,5 +238,5 @@ if __name__ == "__main__":
 
         except Exception as e:
             logger.error(f"💥 Pipeline failed: {str(e)}")
-            print(f"💥 Pipeline failed: {str(e)}")  # for development
+            print(f"💥 Pipeline failed: {str(e)}")  # for development purposes
             exit(1)

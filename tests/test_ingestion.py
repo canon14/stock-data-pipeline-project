@@ -1,6 +1,6 @@
 import pytest
 from moto import mock_aws
-from scripts.ingest_last7days_stock_data import StockExtractor, DailyStockData
+from scripts.ingest_historical_stock_data import StockExtractor, DailyStockData
 
 
 @pytest.fixture
