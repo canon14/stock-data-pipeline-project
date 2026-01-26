@@ -1,4 +1,5 @@
 repos:
+  # 1. Standard hooks for general file cleanup
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
     hooks:
@@ -8,6 +9,15 @@ repos:
       - id: check-added-large-files
         args: ["--maxkb=10800"]
 
+  # 2. Ruff: The lightning-fast Python linter and formatter
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.1.9
+    hooks:
+      - id: ruff
+        args: [--fix] # Automatically fix linting errors
+      - id: ruff-format # Auto-format your code (like Black)
+
+  # 3. SQLFluff: For your dbt models
   - repo: https://github.com/sqlfluff/sqlfluff
     rev: 3.4.2
     hooks:
