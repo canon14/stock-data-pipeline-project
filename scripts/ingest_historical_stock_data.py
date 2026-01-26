@@ -23,7 +23,7 @@ load_dotenv("../.env")
 """ ======================================================================================= """
 # Modify below parameters to define the length of historical data ingestion, end date should be current_date-1
 start_date = "2026-01-01"
-end_date = "2026-01-15"
+end_date = "2026-01-25"
 """ ======================================================================================= """
 
 
@@ -196,7 +196,7 @@ if __name__ == "__main__":
     # We wrap the logic in a try-except block to handle errors gracefully.
 
     # Expand additional tickers below
-    tickers = ["AAPL", "MSFT", "GOOGL"]
+    tickers = ["TSLA"]
 
     # iterate over each ticker in the array
     for ticker in tickers:
