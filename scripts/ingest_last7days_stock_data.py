@@ -241,5 +241,5 @@ if __name__ == "__main__":
 
         except Exception as e:
             logger.error(f"💥 Pipeline failed: {str(e)}")
-            print(f"💥 Pipeline failed: {str(e)}")  # for development
+            print(f"💥 Pipeline failed: {str(e)}")  # for development purposes
             exit(1)
