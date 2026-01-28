@@ -36,6 +36,16 @@ jobs:
         with:
           python-version: "3.13"
 
+      - name: Download Production Manifest from S3
+        run: |
+          mkdir -p prod_artifacts
+          # Ensure this secret name matches exactly what you have in GitHub settings
+          aws s3 cp s3://${{ secrets.DBT_PROD_MANIFEST_AWS_S3_BUCKET_NAME }}/dbt_artifacts/manifest.json prod_artifacts/manifest.json
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+
       - name: Install Dependencies
         run: |
           pip install dbt-snowflake
