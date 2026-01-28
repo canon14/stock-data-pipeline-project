@@ -43,7 +43,7 @@ jobs:
 
       - name: dbt Build (Production)
         # Added --target prod to trigger the correct macro logic
-        run: dbt build --full-refresh --target prod --profiles-dir .
+        run: dbt build --full-refresh --select state:modified+ --state prod_artifacts --target prod --profiles-dir .
 
       - name: Upload New Manifest to S3
         if: success()
