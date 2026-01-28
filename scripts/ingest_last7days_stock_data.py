@@ -202,7 +202,7 @@ if __name__ == "__main__":
     # We wrap the logic in a try-except block to handle errors gracefully.
 
     # Expand additional tickers below
-    tickers = ["AAPL", "MSFT", "GOOGL"]
+    tickers = ["AAPL", "MSFT", "GOOGL", "TSLA"]
 
     # iterate over each ticker in the array
     for ticker in tickers:
