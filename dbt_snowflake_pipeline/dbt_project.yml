@@ -16,16 +16,16 @@ models:
       +materialized: table # Physical storage for raw data
 
     # --- 2. Silver Layer (Cleaned & Transformed) ---
-    silver:
-      +database: SILVER_PRODUCTION
-      +schema: intermediate # Becomes 'INTERMEDIATE' in Prod
-      +materialized: view # Virtual layer to save on storage
+    #silver:
+    #  +database: SILVER_PRODUCTION
+    #  +schema: intermediate # Becomes 'INTERMEDIATE' in Prod
+    #  +materialized: view # Virtual layer to save on storage
 
     # --- 3. Gold Layer (Business Intelligence) ---
-    gold:
-      +database: GOLD_PRODUCTION
-      +schema: analytics # Becomes 'ANALYTICS' in Prod
-      +materialized: table # Optimized for dashboard performance
+    #gold:
+    #  +database: GOLD_PRODUCTION
+    #  +schema: analytics # Becomes 'ANALYTICS' in Prod
+    #  +materialized: table # Optimized for dashboard performance
 
 seeds:
   dbt_snowflake_pipeline:
