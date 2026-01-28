@@ -27,30 +27,35 @@ models:
         description: The price at which the stock started trading
         tests:
           - dbt_utils.expression_is_true:
-              expression: "> 0"
+              arguments:
+                expression: "> 0"
 
       - name: high_price
         description: The highest price during the trading day
         tests:
           - dbt_utils.expression_is_true:
-              expression: "> 0"
+              arguments:
+                expression: "> 0"
 
       - name: low_price
         description: The lowest price during the trading day
         tests:
           - dbt_utils.expression_is_true:
-              expression: "> 0"
+              arguments:
+                expression: "> 0"
 
       - name: close_price
         description: The closing price
         tests:
           - dbt_utils.expression_is_true:
-              expression: "> 0"
+              arguments:
+                expression: "> 0"
 
       - name: volume
         description: Volume of stocks being traded
         tests:
           - dbt_utils.expression_is_true:
-              expression: ">= 0"
-              config:
-                severity: warn
+              arguments:
+                expression: "> 0"
+                config:
+                  severity: warn
