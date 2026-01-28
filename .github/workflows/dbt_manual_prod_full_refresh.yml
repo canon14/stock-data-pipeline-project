@@ -1,0 +1,54 @@
+name: dbt_manual_full_refresh
+
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: "Run ad-hoc manual refresh"
+        required: false
+        default: "Manual data restatement"
+
+jobs:
+  manual_refresh:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./dbt_snowflake_pipeline
+
+    env:
+      # Use the same secrets as your production deploy
+      SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+      SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+      SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+      SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
+      SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
+      SNOWFLAKE_DATABASE: ${{ secrets.SNOWFLAKE_DATABASE }}
+      SNOWFLAKE_SCHEMA: ANALYTICS
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install Dependencies
+        run: |
+          pip install dbt-snowflake
+          dbt deps
+
+      - name: dbt Build (Full Refresh)
+        # Note: We do NOT use state:modified here because
+        # a manual full refresh usually implies you want to rebuild EVERYTHING.
+        run: dbt build --full-refresh --target prod --profiles-dir .
+
+      - name: Upload New Manifest to S3
+        if: success()
+        run: |
+          aws s3 cp target/manifest.json s3://${{ secrets.DBT_PROD_MANIFEST_AWS_S3_BUCKET_NAME }}/dbt_artifacts/manifest.json
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
